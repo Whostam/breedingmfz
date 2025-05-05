@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("My‑Free‑Zoo Breeding Calculator")
+st.title("My-Free-Zoo Breeding Calculator")
 
 # --- User Inputs ---
 success_rate = st.slider(
@@ -27,19 +27,22 @@ days = st.number_input(
     "Number of Days", min_value=1, value=7, step=1
 )
 
-# Validate probabilities
+# --- Validation ---
 if twins_pct + triplets_pct > 1:
     st.error("Error: Twins% + Triplets% must not exceed 100%.")
-else:
-    # Calculate expected births per successful breeding
-twins_prob = twins_pct
-ntrips_prob = triplets_pct
-single_prob = 1 - twins_prob - ntrips_prob
+    st.stop()
 
+# --- Calculations ---
+# Adjusted probabilities
+twins_prob = twins_pct
+triplets_prob = triplets_pct
+single_prob = 1 - twins_prob - triplets_prob
+
+# Expected births per successful breeding
 avg_births_per_success = (
     single_prob * 1
     + twins_prob * 2
-    + ntrips_prob * 3
+    + triplets_prob * 3
 )
 
 # Expected babies per attempt
@@ -53,13 +56,13 @@ total_expected_babies = daily_expected_babies * days
 initial_animals = pairs * 2
 final_expected_animals = initial_animals + total_expected_babies
 
-# Display results
+# --- Display Results ---
 st.subheader("Results")
 st.write(f"Initial Animals: **{initial_animals}**")
 st.write(f"Expected Newborns: **{total_expected_babies:.1f}**")
 st.write(f"Expected Total Animals after {days} days: **{final_expected_animals:.1f}**")
 
-# Optional: show breakdown
+# Optional breakdown
 with st.expander("Show Calculation Breakdown"):
     st.write(f"Success Rate: {success_rate * 100:.1f}%")
     st.write(f"Avg Births per Success: {avg_births_per_success:.2f}")
